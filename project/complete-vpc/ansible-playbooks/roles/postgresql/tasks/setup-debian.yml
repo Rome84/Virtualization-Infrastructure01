@@ -1,0 +1,45 @@
+---
+- name: install postgresql packages
+  package: >-
+    name={{ item }}
+    state=present
+  with_items: "{{ postgresql_packages }}"
+  register: postgresql_install_packages
+
+- name: get default postgresql version
+  environment:
+    LC_ALL: 'C'
+  shell: "apt-cache policy postgresql-client | grep -E '^\\s+Candidate:\\s+' | awk '{print $2}' | cut -d+ -f1"
+  register: postgresql_apt_version
+  changed_when: False
+  check_mode: no
+
+- name: set postgresql_version fact
+  set_fact:
+    postgresql_version: "{{ postgresql_apt_version.stdout }}"
+
+- name: create postgresql data path
+  file: >-
+    path={{ postgresql_data_directory }}
+    state=directory
+    owner=postgres
+    group=postgres
+    mode=0700
+
+- name: initialize postgresql if necessary
+  environment:
+    PGDATA: "{{ postgresql_base_directory }}/{{ postgresql_version }}/main"
+  command: >-
+    creates="{{ postgresql_base_directory }}/{{ postgresql_version }}/main/PG_VERSION"
+    /usr/lib/postgresql/{{ postgresql_version }}/bin/initdb
+  become: yes
+  become_user: "{{ postgresql_admin_user }}"
+  notify: restart postgresql
+
+- name: create postgresql backup path
+  file: >-
+    path={{ postgresql_backup_directory }}
+    state=directory
+    owner=postgres
+    group=postgres
+    mode=0700

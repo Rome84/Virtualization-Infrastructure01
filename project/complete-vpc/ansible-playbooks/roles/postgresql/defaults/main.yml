@@ -1,0 +1,38 @@
+---
+postgresql_service_name: postgresql
+postgresql_admin_user: postgres
+postgresql_database_owner: "{{ postgresql_admin_user }}"
+postgresql_locale: "en_US.UTF-8"
+postgresql_packages: "{{ postgresql_packages_default }}"
+#
+postgresql_yum_repo_url: ""
+postgresql_yum_rpm_key: ""
+#
+postgresql_users: []
+postgresql_databases: []
+#
+postgresql_base_directory: "{{ postgresql_base_directory_default }}"
+postgresql_conf_directory: "{{ postgresql_conf_directory_default }}"
+postgresql_data_directory: "{{ postgresql_data_directory_default }}"
+postgresql_backup_directory: "{{ postgresql_backup_directory_default }}"
+postgresql_backup_path: "{{ postgresql_backup_directory }}"
+postgresql_bin_directory: /usr/bin
+postgresql_pid_directory: /var/run/postgresql
+postgresql_external_pid_file: "{{ postgresql_external_pid_file_default }}"
+#
+postgresql_do_backup: no
+postgresql_backup_age: 14
+postgresql_backup_opts: "--exclude-table-data=sessions -U postgres --create"
+postgresql_backup_compression: xz
+#
+# HBA
+postgresql_auth_method_default: "md5"
+postgresql_pg_hba_conf_default:
+ - { type: local, database: all, user: "{{postgresql_admin_user}}", address: '', method: peer  }
+ - { type: host,  database: all, user: all, address: "127.0.0.1/32", method: "{{ postgresql_auth_method_default }}" }
+ - { type: host,  database: all, user: all, address: "::1/128",      method: "{{ postgresql_auth_method_default }}" }
+postgresql_pg_hba_conf: []
+#
+# postgresql.conf
+#
+postgresql_conf: []

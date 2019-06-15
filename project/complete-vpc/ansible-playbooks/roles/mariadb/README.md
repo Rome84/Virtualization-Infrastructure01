@@ -123,4 +123,4 @@ GPLv2
 Author Information
 ------------------
 
-See https://github.com/sfromm
+Rome
