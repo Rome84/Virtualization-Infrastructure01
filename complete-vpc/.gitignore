@@ -1,8 +1,0 @@
-.terraform
-*.tfstate*
-.kitchen
-terraform.tfstate
-terraform.tfvars
-Gemfile.lock
-mykey1
-mykey1.pub
